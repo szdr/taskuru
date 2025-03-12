@@ -91,7 +91,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () => _taskList.resetTask(task.id),
+                  onPressed: () => _showResetConfirmationDialog(task),
                   child: const Text('タイマーリセット'),
                 ),
                 IconButton(
@@ -191,6 +191,34 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 ],
               );
             }));
+  }
+
+  void _showResetConfirmationDialog(Task task) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+                title: const Text('タイマーのリセット'),
+                content: Text('「${task.title}」のタイマーをリセットしてもよろしいですか？'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('キャンセル'),
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        _taskList.resetTask(task.id);
+                        Navigator.pop(context);
+
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('「${task.title}」のタイマーをリセットしました'),
+                          duration: const Duration(seconds: 3),
+                        ));
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.red,
+                      ),
+                      child: const Text('リセット'))
+                ]));
   }
 
   void _showDeleteConfirmationDialog(Task task) {
